@@ -6,12 +6,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class FileService {
 
     public static final String MAIN_DIR = System.getProperty("user.dir");
     public static final String SEP = System.getProperty("file.separator");
     public static final String FILES_DIR = MAIN_DIR + SEP + "files";
+    private static final Logger LOGGER = Logger.getLogger(FileService.class.getName());
 
     // work with text
     public  static void writeTextToFile(String text, String fileName, boolean append) {
@@ -40,8 +42,8 @@ public class FileService {
     public  static String readTextFromFile(String fileName) {
         String out = "";
 
-        try (FileReader fileReader = new FileReader(FILES_DIR + SEP + fileName);
-             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(new FileReader(FILES_DIR + SEP + fileName))) {
                String line;
                while ( ( line = bufferedReader.readLine()) != null ) {
                    out += line + "\n";
@@ -125,4 +127,28 @@ public class FileService {
         sourceFile.delete();
 
     }
+
+    public static void writeObjectToFile(Object object, String fileName) {
+        checkTargetDir();
+        try (ObjectOutputStream objectOutputStream =
+                     new ObjectOutputStream(new FileOutputStream(FILES_DIR + SEP + fileName))){
+            objectOutputStream.writeObject(object);
+            objectOutputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Object getObjectFromFile(String fileName) {
+        try (ObjectInputStream objectInputStream =
+                     new ObjectInputStream(new FileInputStream(FILES_DIR + SEP + fileName))) {
+            return objectInputStream.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
 }

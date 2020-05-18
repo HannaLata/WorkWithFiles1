@@ -1,6 +1,9 @@
 package com.mainacad.model;
 
-public class ConnectionInfo {
+
+import java.io.Serializable;
+
+public class ConnectionInfo implements Serializable {
 
     private Integer sessionId;
     private Long connectionTime;

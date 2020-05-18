@@ -2,6 +2,7 @@ package com.mainacad.service;
 
 import com.mainacad.helper.ConnectionInfoHelper;
 import com.mainacad.model.ConnectionInfo;
+import com.mainacad.model.Person;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -13,6 +14,7 @@ class FileServiceTest {
 
     private static final String TEXT_FILE_NAME = "test_text_file.txt";
     private static final String BYTES_FILE_NAME = "test_bytes_file.obj";
+    private static ConnectionInfo connectionInfo;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -20,6 +22,9 @@ class FileServiceTest {
         FileService.writeBytesToFile(new byte[0], BYTES_FILE_NAME);
         byte[] testBytes = FileService.getBytesFromFile("cat.jpg");
         FileService.writeBytesToFile(testBytes, BYTES_FILE_NAME);
+
+        connectionInfo = ConnectionInfoHelper.getRandomConnectionInfo();
+        FileService.writeObjectToFile(connectionInfo, "test_obj.obj");
 
     }
     @BeforeEach
@@ -71,5 +76,15 @@ class FileServiceTest {
         byte[] testBytes = FileService.getBytesFromFile(BYTES_FILE_NAME);
         assertNotNull(testBytes);
         assertNotNull(testBytes.length > 0);
+    }
+
+    @Test
+    void getObjectFromFile() {
+        ConnectionInfo testConnectionInfo = (ConnectionInfo) FileService.getObjectFromFile("test_obj.obj");
+
+        assertNotNull(connectionInfo);
+        assertEquals(testConnectionInfo.getIp(), connectionInfo.getIp());
+        assertEquals(testConnectionInfo.getConnectionTime(), connectionInfo.getConnectionTime());
+        assertEquals(testConnectionInfo.getSessionId(),connectionInfo.getSessionId());
     }
 }
